@@ -1,0 +1,91 @@
+import { motion } from 'framer-motion';
+import { Outlet } from 'react-router-dom';
+
+import AppSidebar from './app-sidebar';
+import { FaSearch } from 'react-icons/fa';
+import { useState } from 'react';
+// import { GiHamburgerMenu } from 'react-icons/gi';
+
+export default function AppLayout() {
+  const [showSidebar, setShowSidebar] = useState(false);  
+
+  
+
+  return (
+    <>
+      {/* Header stays at the top */}
+      <header className="bg-green-900 text-white sticky top-0 z-20 w-full py-4 px-4 lg:px-6">
+        <div className="flex justify-between items-center">
+
+          <div className="flex items-center gap-4 w-full justify-end">
+            <div className="rounded-2xl bg-[#09290b44] items-center gap-2 p-2 text-sm w-full max-w-xs hidden md:flex">
+              <FaSearch size={20} className="text-gray-200" />
+              <input
+                type="text"
+                placeholder="Welcome Susan Anthony"
+                className="bg-transparent outline-none text-white placeholder-gray-300 w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Search bar on mobile */}
+        <div className="rounded-2xl bg-[#09291244] flex items-center gap-2 p-2 text-sm w-full  mt-5 md:hidden">
+          <FaSearch size={20} className="text-gray-200" />
+          <input
+            type="text"
+            placeholder="Welcome Susan Anthony"
+            className="bg-transparent outline-none text-white placeholder-gray-300 w-full"
+          />
+        </div>
+      </header>
+
+      {/* Main layout with sidebar + page content */}
+      <main className="flex min-h-screen bg-[#F5F6FA]">
+        {/* Sidebar */}
+        <aside className="hidden w-[250px] lg:block">
+          <AppSidebar />
+        </aside>
+
+        {/* Sidebar on tablet (overlay style) */}
+        {showSidebar && (
+          <div
+            className="fixed inset-0 z-40 lg:hidden"
+            onClick={() => setShowSidebar(false)}
+          >
+            <div
+              className="absolute left-0 top-0 h-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <AppSidebar onClose={() => setShowSidebar(false)} />
+            </div>
+          </div>
+        )}
+
+        {/* Page content */}
+        <div className="flex flex-col flex-1">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, type: "spring" }}
+            className="flex-1"
+          >
+            <Outlet />
+          </motion.div>
+
+          {/* Footer */}
+          <footer className="my-2 flex w-full items-center justify-center text-[10px] text-gray-500">
+            &copy; {new Date().getFullYear()} Banking system. All Rights
+            Reserved.
+          </footer>
+        </div>
+      </main>
+
+      {/* Mobile Footer Nav - now always rendered */}
+      <div className="block lg:hidden">
+        <AppSidebar />
+      </div>
+    </>
+  );
+}
